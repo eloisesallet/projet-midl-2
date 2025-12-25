@@ -1,6 +1,4 @@
 vis_results/
 .ipynb_checkpoints/
-*.mp4
-*.jpg
 __pycache__/
 mmpose/
