@@ -1,0 +1,220 @@
+\documentclass{article}
+\usepackage{bbm}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{listings}
+
+\lstset{ 
+  language=Python,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{gray!10},
+  frame=single,
+  rulecolor=\color{black},
+  breaklines=true,
+  captionpos=b
+  inputencoding=utf8, % Permet d'utiliser les accents
+  extendedchars=true 
+}
+
+\geometry{a4paper, margin=2.5cm}
+
+% Mise en forme des entêtes et pieds de page
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+
+% Couleurs pour listings
+\definecolor{codegray}{gray}{0.95}
+
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  frame=single,
+  breaklines=true,
+  tabsize=2,
+  language=Python, % à adapter selon ton code
+  captionpos=b
+}
+
+% Page de garde
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+
+    % Logo avec taille réduite
+    \includegraphics[width=0.4\textwidth]{universite-de-toulouse-2023-logo-png_seeklogo-469435.png} 
+
+    \vspace{1.5cm}
+
+    % Titre principal
+    {\LARGE \textbf{Projet MIDL 2}}\\[0.5cm]
+
+    % Auteurs
+    {\large
+        CROS Héléna\\
+        HO Sylvie\\
+        LORY Solène\\
+        SALLET Eloïse
+    }
+
+    \vfill
+
+    % Texte de bas de page, centré
+    {\large
+        Projet de la double licence mathématiques et informatique\\
+        Janvier 2026
+    }
+
+\end{titlepage}
+
+% Table des matières
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+
+
+\newpage
+  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Ici commencent les annexes :
+% 
+\appendix
+
+\section{Codes sources}
+
+\label{code 2}
+\begin{lstlisting}[caption = Simulation d'une marche aléatoire sans mémoire.]
+import numpy as np
+import matplotlib.pyplot as pls
+
+n = 100 #nombre de pas
+p = 0.5
+
+steps = []
+for i in range(n):
+    u = np.random.rand() #nombre entre 0 et 1
+    step = 1*(u<p) - 1*(u>p) 
+    steps.append(step)
+\end{lstlisting}
+
+\begin{lstlisting}[caption = Code source pour tracer le graphe simulant la marche aléatoire sans mémoire.]
+# Graphique
+position = np.cumsum(steps)
+pls.plot(position, color="blue")
+pls.xlabel("Nombre de pas")
+pls.ylabel("Position")
+pls.grid()
+\end{lstlisting}
+
+
+\begin{lstlisting}[caption = Code source pour simuler la moyenne du nombre de pas du premier retour à 0.]
+# test avec un grand nombre de marches aleatoires
+nb_simulations = 10000
+valeur_retour_0 = []
+grand_nb_pas = 0
+
+for n in range(nb_simulations):
+    position_test = 1
+    steps_count = 0
+    
+    while position_test != 0:
+        u = np.random.rand()
+        step = 1 * (u < p) - 1 * (u > p)  
+        position_test += step
+        steps_count += 1
+        
+        # pour eviter une trop longue execution
+        if steps_count>10000: 
+            grand_nb_pas+=1
+            break 
+            
+    # Stocke le nombre de pas du premier retour a 0
+    valeur_retour_0.append(steps_count)  
+
+ # Calcul de la moyenne
+val = 0
+for i in range(len(valeur_retour_0)):
+    val+=valeur_retour_0[i]
+
+moyenne = val / len(valeur_retour_0)
+print("Moyenne du nombre de pas pour revenir a 0 :", moyenne)
+print("Plus de 10000 pas :",grand_nb_pas)
+\end{lstlisting}  
+
+
+
+\label{code_marche_elephant} 
+\begin{lstlisting}[caption = Modélisation et tracé du graphe d'une marche aléatoire de l'éléphant.]
+import random
+import matplotlib.pyplot as pls
+import numpy as np
+
+n = 100
+q = 0.4
+p = 0.3 
+
+"""
+Pour simplifier la modelisation numerique, on etendra la suite e 0 pour modeliser la position initiale de l'elephant en 0 
+"""
+sigma_n = [0]
+
+sigma_n.append(random.choices([-1, 1], weights=[1-q, q])[0])
+
+for i in range (1 , n):
+    T_n = random.randint(1, i)
+    sigma = random.choices([-sigma_n[T_n], sigma_n[T_n]], weights=[1-p, p])[0]
+    sigma_n.append(sigma)
+    
+S_n = np.cumsum(sigma_n)
+
+pls.plot(S_n, color="blue")
+pls.xlabel("Temps (n)")
+pls.ylabel("Position de l'elephant (S_n)")
+pls.grid()
+\end{lstlisting}
+
+
+\newpage
+
+
+\begin{thebibliography}{}
+
+%%%%%%%%%%%% À REMPLACER PAR VOS RÉFÉRENCES !!! %%%%%%%%%%
+
+\bibitem{ross} ROSS, Sheldon M. Initiation aux probabilités. 4\up{ème} édition. Lausanne : Presses polytechniques et Universitaires Romandes, 2014. 606 p.
+
+\bibitem{schutz} SCHUTZ , G. M., AND TRIMPER , S. Elephants can always remember: Ex- act long-range memory effects in a non-markovian random walk. Physical review. E 70, 045101
+(2004)
+
+\bibitem{alain} CAMANES, Alain. Récurrence de marches aléatoires. Notes d'exposé Mathématiques. Nantes : Séminaire du lycée Clémenceau. 12 p
+
+
+
+\
+
+\end{thebibliography}
+
+
+
+
+%%%%%%%%%%%%%%%%%%% FIN DU DOCUMENT %%%%%%%%%%%%%%%%%%
+\end{document}
+
